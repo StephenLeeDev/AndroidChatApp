@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         buttonLogin.setOnClickListener(this::onClick);
     }
 
-    private void clickButtonLogin() {
+    private void clickLoginButton() {
         email = editTextEmail.getText().toString().trim();
         password = editTextPassword.getText().toString().trim();
 
@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonLogin:
-                clickButtonLogin();
+                clickLoginButton();
                 break;
         }
     }

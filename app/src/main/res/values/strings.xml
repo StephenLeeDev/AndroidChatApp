@@ -7,5 +7,7 @@
     <string name="login_failed">Login Failed</string>
     <string name="enter_name">Enter Name</string>
     <string name="enter_confirm_password">Enter Confirm Password</string>
+    <string name="enter_correct_email">Enter Correct Email</string>
+    <string name="password_mismatch">Password Mismatch</string>
     <string name="sign_up">Sign Up</string>
 </resources>
