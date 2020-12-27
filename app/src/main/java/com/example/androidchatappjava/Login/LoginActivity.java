@@ -1,12 +1,14 @@
-package com.example.androidchatappjava;
+package com.example.androidchatappjava.Login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.androidchatappjava.R;
+import com.example.androidchatappjava.SignUp.SignUpActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -14,7 +16,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     TextInputEditText editTextEmail, editTextPassword;
     String email, password;
-    Button buttonLogin;
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
     @Override
@@ -25,7 +26,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
 
-        buttonLogin.setOnClickListener(this::onClick);
+        findViewById(R.id.buttonLogin).setOnClickListener(this::onClick);
+        findViewById(R.id.textViewSignUp).setOnClickListener(this::onClick);
     }
 
     private void clickLoginButton() {
@@ -47,11 +49,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    private void clickSignUp() {
+        startActivity(new Intent(this, SignUpActivity.class));
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonLogin:
                 clickLoginButton();
+                break;
+            case R.id.textViewSignUp:
+                clickSignUp();
                 break;
         }
     }
