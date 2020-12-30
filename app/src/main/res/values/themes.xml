@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.AndroidChatAppJava" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.AndroidChatAppJava" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">#450c3a</item>
         <item name="colorPrimaryDark">#390A30</item>
