@@ -17,4 +17,7 @@
     <string name="access_permission_is_required">Access permission is required</string>
     <string name="save">Save</string>
     <string name="logout">Logout</string>
+    <string name="change_picture">Change Picture</string>
+    <string name="remove_picture">Remove Picture</string>
+    <string name="photo_removed_successfully">Photo removed successfully</string>
 </resources>
