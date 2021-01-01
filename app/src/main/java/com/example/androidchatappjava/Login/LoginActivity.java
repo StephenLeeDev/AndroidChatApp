@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.androidchatappjava.MainActivity;
 import com.example.androidchatappjava.R;
 import com.example.androidchatappjava.SignUp.SignUpActivity;
 import com.google.android.material.textfield.TextInputEditText;
@@ -41,7 +42,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         } else {
             firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-
+                    startActivity(new Intent(this, MainActivity.class));
+                    finish();
                 } else {
                     Toast.makeText(this, getString(R.string.login_failed) + " : " + task.getException(), Toast.LENGTH_SHORT).show();
                 }

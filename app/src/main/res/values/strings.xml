@@ -20,4 +20,5 @@
     <string name="change_picture">Change Picture</string>
     <string name="remove_picture">Remove Picture</string>
     <string name="photo_removed_successfully">Photo removed successfully</string>
+    <string name="profile">Profile</string>
 </resources>

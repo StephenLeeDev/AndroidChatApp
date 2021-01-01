@@ -56,7 +56,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
         imageViewProfile = findViewById(R.id.imageViewProfile);
 
-        findViewById(R.id.buttonSignUp).setOnClickListener(this::onClick);
+        findViewById(R.id.buttonSave).setOnClickListener(this::onClick);
         findViewById(R.id.imageViewProfile).setOnClickListener(this::onClick);
 
         storageReference = FirebaseStorage.getInstance().getReference();
@@ -207,7 +207,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.buttonSignUp:
+            case R.id.buttonSave:
                 clickSignUpButton();
                 break;
             case R.id.imageViewProfile:

@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
@@ -54,10 +55,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         editTextEmail = findViewById(R.id.editTextEmail);
         imageViewProfile = findViewById(R.id.imageViewProfile);
 
-        findViewById(R.id.buttonSignUp).setOnClickListener(this::onClick);
+        findViewById(R.id.buttonSave).setOnClickListener(this::onClick);
         findViewById(R.id.imageViewProfile).setOnClickListener(this::onClick);
 
         firebaseUser = firebaseAuth.getCurrentUser();
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         if (firebaseUser != null) {
             editTextName.setText(firebaseUser.getDisplayName());
@@ -70,14 +72,20 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    private void clickLogoutButton(View view) {
+        firebaseAuth.signOut();
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
+    }
+
     private void clickSaveButton(View view) {
         if ("".equals(editTextName.getText().toString().trim())) {
             editTextName.setError(getString(R.string.enter_name));
         } else {
-            if (serverFileUri != null) {
+            if (localFileUri != null) {
                 updateNameAndPhoto();
             } else {
-
+                updateOnlyName();
             }
         }
     }
@@ -105,8 +113,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                             databaseReference.child(userId).setValue(hashMap).addOnCompleteListener(task2 -> {
                                 if (task2.isSuccessful()) {
-                                    Toast.makeText(this, getString(R.string.user_created_successfully), Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(this, LoginActivity.class));
                                     finish();
                                 } else {
                                     Toast.makeText(this, getString(R.string.fail_to_update_profile, task2.getException()), Toast.LENGTH_SHORT).show();
@@ -135,8 +141,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                 databaseReference.child(userId).setValue(hashMap).addOnCompleteListener(task1 -> {
                     if (task1.isSuccessful()) {
-                        Toast.makeText(this, getString(R.string.user_created_successfully), Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(this, LoginActivity.class));
                         finish();
                     } else {
                         Toast.makeText(this, getString(R.string.fail_to_update_profile, task.getException()), Toast.LENGTH_SHORT).show();
@@ -149,7 +153,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void changeImage(View view) {
-        if (serverFileUri != null) {
+        if (serverFileUri == null) {
             pickImage();
         } else {
             PopupMenu popupMenu = new PopupMenu(this, view);
@@ -162,11 +166,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     if (id == R.id.menu_change_picture) {
                         pickImage();
                     } else if (id == R.id.menu_remove_picture) {
-
+                        removePhoto();
                     }
                     return false;
                 }
             });
+            popupMenu.show();
         }
     }
 
@@ -186,6 +191,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             if (task1.isSuccessful()) {
                 String userId = firebaseUser.getUid();
                 databaseReference = FirebaseDatabase.getInstance().getReference().child(NodeNames.getInstance().USERS);
+                imageViewProfile.setImageResource(R.drawable.default_profile);
 
                 HashMap<String, String> hashMap = new HashMap<>();
                 hashMap.put(NodeNames.getInstance().PHOTO, "");
@@ -193,8 +199,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 databaseReference.child(userId).setValue(hashMap).addOnCompleteListener(task2 -> {
                     if (task2.isSuccessful()) {
                         Toast.makeText(this, getString(R.string.photo_removed_successfully), Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(this, LoginActivity.class));
-                        finish();
                     } else {
                         Toast.makeText(this, getString(R.string.fail_to_update_profile, task2.getException()), Toast.LENGTH_SHORT).show();
                     }
@@ -220,7 +224,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-
+            case R.id.buttonSave:
+                clickSaveButton(v);
+                break;
+            case R.id.buttonLogout:
+                clickLogoutButton(v);
+                break;
+            case R.id.imageViewProfile:
+                changeImage(v);
+                break;
         }
     }
 }
