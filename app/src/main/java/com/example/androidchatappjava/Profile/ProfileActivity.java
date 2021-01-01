@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.androidchatappjava.Common.NodeNames;
 import com.example.androidchatappjava.Login.LoginActivity;
+import com.example.androidchatappjava.Password.ChangePasswordActivity;
 import com.example.androidchatappjava.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
@@ -232,6 +233,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.imageViewProfile:
                 changeImage(v);
+                break;
+            case R.id.textViewChangePassword:
+                startActivity(new Intent(this, ChangePasswordActivity.class));
                 break;
         }
     }
