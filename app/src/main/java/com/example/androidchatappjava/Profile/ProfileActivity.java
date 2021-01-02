@@ -58,6 +58,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         findViewById(R.id.buttonSave).setOnClickListener(this::onClick);
         findViewById(R.id.imageViewProfile).setOnClickListener(this::onClick);
+        findViewById(R.id.textViewChangePassword).setOnClickListener(this::onClick);
 
         firebaseUser = firebaseAuth.getCurrentUser();
         storageReference = FirebaseStorage.getInstance().getReference();
