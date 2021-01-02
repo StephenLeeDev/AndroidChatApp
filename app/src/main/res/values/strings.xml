@@ -24,4 +24,7 @@
     <string name="change_password">Change Password</string>
     <string name="password_changed_successfully">Password changed successfully</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="reset_password_instructions">Reset Password instructions has been sent on email :  %1$s</string>
+    <string name="retry">Retry</string>
+    <string name="close">Close</string>
 </resources>
