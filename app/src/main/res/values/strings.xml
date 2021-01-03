@@ -27,4 +27,6 @@
     <string name="reset_password_instructions">Reset Password instructions has been sent on email :  %1$s</string>
     <string name="retry">Retry</string>
     <string name="close">Close</string>
+    <string name="email_sent_failed">Failed to send email : %1$s</string>
+    <string name="resend_timer">Resend in : %1$S</string>
 </resources>

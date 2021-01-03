@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.androidchatappjava.MainActivity;
+import com.example.androidchatappjava.Password.ResetPasswordActivity;
 import com.example.androidchatappjava.R;
 import com.example.androidchatappjava.SignUp.SignUpActivity;
 import com.google.android.material.textfield.TextInputEditText;
@@ -29,6 +31,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         findViewById(R.id.buttonLogin).setOnClickListener(this::onClick);
         findViewById(R.id.textViewSignUp).setOnClickListener(this::onClick);
+        findViewById(R.id.textViewResetPassword).setOnClickListener(this::onClick);
     }
 
     private void clickLoginButton() {
@@ -64,6 +67,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.textViewSignUp:
                 clickSignUp();
                 break;
+            case R.id.textViewResetPassword:
+                startActivity(new Intent(this, ResetPasswordActivity.class));
         }
     }
 }
