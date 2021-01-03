@@ -64,7 +64,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
                                 linearLayoutMessage.setVisibility(View.GONE);
                             });
                         }
-                    };
+                    }.start();
                 } else {
                     textViewMessage.setText(getString(R.string.email_sent_failed, task.getException()));
                     buttonRetry.setText(getString(R.string.retry));

@@ -14,6 +14,7 @@ import com.example.androidchatappjava.R;
 import com.example.androidchatappjava.SignUp.SignUpActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -69,6 +70,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.textViewResetPassword:
                 startActivity(new Intent(this, ResetPasswordActivity.class));
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (firebaseUser != null) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
         }
     }
 }
