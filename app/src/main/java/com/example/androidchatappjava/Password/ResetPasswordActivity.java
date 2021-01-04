@@ -7,6 +7,7 @@ import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.androidchatappjava.R;
@@ -15,10 +16,11 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class ResetPasswordActivity extends AppCompatActivity implements View.OnClickListener {
 
-    TextInputEditText editTextEmail;
-    TextView textViewMessage;
-    LinearLayout linearLayoutMessage, linearLayoutResetPassword;
-    Button buttonRetry, buttonClose;
+    private TextInputEditText editTextEmail;
+    private TextView textViewMessage;
+    private LinearLayout linearLayoutMessage, linearLayoutResetPassword;
+    private Button buttonRetry, buttonClose;
+    private View progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
         linearLayoutResetPassword = findViewById(R.id.linearLayoutResetPassword);
         buttonRetry = findViewById(R.id.buttonRetry);
         buttonClose = findViewById(R.id.buttonClose);
+        progressBar = findViewById(R.id.progressBar);
 
         findViewById(R.id.buttonRetry).setOnClickListener(this::onClick);
         findViewById(R.id.buttonClose).setOnClickListener(this::onClick);
@@ -43,8 +46,10 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
         if ("".equals(email)) {
             editTextEmail.setError(getString(R.string.enter_email));
         } else {
+            progressBar.setVisibility(View.VISIBLE);
             FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
             firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
+                progressBar.setVisibility(View.GONE);
                 linearLayoutResetPassword.setVisibility(View.GONE);
                 linearLayoutMessage.setVisibility(View.VISIBLE);
                 if (task.isSuccessful()) {

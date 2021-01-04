@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,9 +19,10 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    TextInputEditText editTextEmail, editTextPassword;
-    String email, password;
-    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private TextInputEditText editTextEmail, editTextPassword;
+    private String email, password;
+    private View progressBar;
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +31,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
+        progressBar = findViewById(R.id.progressBar);
 
         findViewById(R.id.buttonLogin).setOnClickListener(this::onClick);
         findViewById(R.id.textViewSignUp).setOnClickListener(this::onClick);
@@ -44,7 +47,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         } else if ("".equals(password)) {
             editTextPassword.setError(getString(R.string.enter_password));
         } else {
+            progressBar.setVisibility(View.VISIBLE);
             firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                progressBar.setVisibility(View.GONE);
                 if (task.isSuccessful()) {
                     startActivity(new Intent(this, MainActivity.class));
                     finish();

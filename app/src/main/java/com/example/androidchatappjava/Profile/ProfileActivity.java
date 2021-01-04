@@ -38,9 +38,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private TextInputEditText editTextName, editTextEmail;
     private ImageView imageViewProfile;
+    private View progressBar;
     private String name, email;
-    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseUser firebaseUser;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
@@ -55,6 +56,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         editTextName = findViewById(R.id.editTextName);
         editTextEmail = findViewById(R.id.editTextEmail);
         imageViewProfile = findViewById(R.id.imageViewProfile);
+        progressBar = findViewById(R.id.progressBar);
 
         findViewById(R.id.buttonSave).setOnClickListener(this::onClick);
         findViewById(R.id.imageViewProfile).setOnClickListener(this::onClick);
@@ -98,7 +100,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         final StorageReference reference = storageReference.child("images/" + fileName);
 
+        progressBar.setVisibility(View.VISIBLE);
         reference.putFile(localFileUri).addOnCompleteListener(task -> {
+            progressBar.setVisibility(View.GONE);
             if (task.isSuccessful()) {
                 reference.getDownloadUrl().addOnSuccessListener(uri -> {
                     serverFileUri = uri;
@@ -133,7 +137,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void updateOnlyName() {
         UserProfileChangeRequest request = new UserProfileChangeRequest.Builder().setDisplayName(editTextName.getText().toString().trim()).build();
 
+        progressBar.setVisibility(View.VISIBLE);
         firebaseUser.updateProfile(request).addOnCompleteListener(task -> {
+            progressBar.setVisibility(View.GONE);
             if (task.isSuccessful()) {
                 String userId = firebaseUser.getUid();
                 databaseReference = FirebaseDatabase.getInstance().getReference().child(NodeNames.getInstance().USERS);
@@ -190,7 +196,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void removePhoto() {
         UserProfileChangeRequest request = new UserProfileChangeRequest.Builder().setDisplayName(editTextName.getText().toString().trim()).setPhotoUri(null).build();
 
+        progressBar.setVisibility(View.VISIBLE);
         firebaseUser.updateProfile(request).addOnCompleteListener(task1 -> {
+            progressBar.setVisibility(View.GONE);
             if (task1.isSuccessful()) {
                 String userId = firebaseUser.getUid();
                 databaseReference = FirebaseDatabase.getInstance().getReference().child(NodeNames.getInstance().USERS);

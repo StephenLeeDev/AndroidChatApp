@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.androidchatappjava.Common.NodeNames;
@@ -36,9 +37,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     private TextInputEditText editTextName, editTextEmail, editTextPassword, editTextConfirmPassword;
     private ImageView imageViewProfile;
-    private String name, email, password, confirmPassword;
-    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private String name, email, password, confirmPassword;;
+    private View progressBar;
 
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private FirebaseUser firebaseUser;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
@@ -55,6 +57,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
         imageViewProfile = findViewById(R.id.imageViewProfile);
+        progressBar = findViewById(R.id.progressBar);
 
         findViewById(R.id.buttonSave).setOnClickListener(this::onClick);
         findViewById(R.id.imageViewProfile).setOnClickListener(this::onClick);
@@ -102,7 +105,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
         final StorageReference reference = storageReference.child("images/" + fileName);
 
+        progressBar.setVisibility(View.VISIBLE);
         reference.putFile(localFileUri).addOnCompleteListener(task -> {
+            progressBar.setVisibility(View.GONE);
             if (task.isSuccessful()) {
                 reference.getDownloadUrl().addOnSuccessListener(uri -> {
                     serverFileUri = uri;
@@ -141,7 +146,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private void updateOnlyName() {
         UserProfileChangeRequest request = new UserProfileChangeRequest.Builder().setDisplayName(editTextName.getText().toString().trim()).build();
 
+        progressBar.setVisibility(View.VISIBLE);
         firebaseUser.updateProfile(request).addOnCompleteListener(task -> {
+            progressBar.setVisibility(View.GONE);
             if (task.isSuccessful()) {
                 String userId = firebaseUser.getUid();
                 databaseReference = FirebaseDatabase.getInstance().getReference().child(NodeNames.getInstance().USERS);
@@ -188,7 +195,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         } else if (!password.equals(confirmPassword)) {
             editTextEmail.setError(getString(R.string.password_mismatch));
         } else {
+            progressBar.setVisibility(View.VISIBLE);
             firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                progressBar.setVisibility(View.GONE);
                 if (task.isSuccessful()) {
                     firebaseUser = firebaseAuth.getCurrentUser();
 

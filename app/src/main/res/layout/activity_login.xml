@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".Login.LoginActivity">
 
+    <include
+        layout="@layout/custom_progressbar"
+        android:id="@+id/progressBar"
+        android:visibility="gone"
+        />
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="120dp"
