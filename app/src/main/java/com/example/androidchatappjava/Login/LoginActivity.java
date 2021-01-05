@@ -9,7 +9,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.androidchatappjava.Common.Util;
 import com.example.androidchatappjava.MainActivity;
+import com.example.androidchatappjava.MessageActivity;
 import com.example.androidchatappjava.Password.ResetPasswordActivity;
 import com.example.androidchatappjava.R;
 import com.example.androidchatappjava.SignUp.SignUpActivity;
@@ -47,16 +49,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         } else if ("".equals(password)) {
             editTextPassword.setError(getString(R.string.enter_password));
         } else {
-            progressBar.setVisibility(View.VISIBLE);
-            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-                progressBar.setVisibility(View.GONE);
-                if (task.isSuccessful()) {
-                    startActivity(new Intent(this, MainActivity.class));
-                    finish();
-                } else {
-                    Toast.makeText(this, getString(R.string.login_failed) + " : " + task.getException(), Toast.LENGTH_SHORT).show();
-                }
-            });
+            if (Util.getInstance().connectionAvailable(this)) {
+                progressBar.setVisibility(View.VISIBLE);
+                firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                    progressBar.setVisibility(View.GONE);
+                    if (task.isSuccessful()) {
+                        startActivity(new Intent(this, MainActivity.class));
+                        finish();
+                    } else {
+                        Toast.makeText(this, getString(R.string.login_failed) + " : " + task.getException(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                startActivity(new Intent(this, MessageActivity.class));
+            }
         }
     }
 
