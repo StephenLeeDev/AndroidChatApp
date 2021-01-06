@@ -14,17 +14,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidChatAppJava">
-        <activity android:name=".MessageActivity"></activity>
-        <activity android:name=".Password.ResetPasswordActivity" />
-        <activity android:name=".Password.ChangePasswordActivity" />
-        <activity android:name=".Profile.ProfileActivity" />
-        <activity android:name=".SignUp.SignUpActivity" />
-        <activity android:name=".Login.LoginActivity">
+        <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".MessageActivity" />
+        <activity android:name=".Password.ResetPasswordActivity" />
+        <activity android:name=".Password.ChangePasswordActivity" />
+        <activity android:name=".Profile.ProfileActivity" />
+        <activity android:name=".SignUp.SignUpActivity" />
+        <activity android:name=".Login.LoginActivity">
         </activity>
         <activity android:name=".MainActivity" />
     </application>
