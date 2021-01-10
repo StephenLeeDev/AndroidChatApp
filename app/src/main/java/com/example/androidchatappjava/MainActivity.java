@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.androidchatappjava.Profile.ProfileActivity;
 import com.google.android.material.tabs.TabLayout;
@@ -105,5 +106,26 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(this, ProfileActivity.class));
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean doubleBackPressed = false;
+
+    @Override
+    public void onBackPressed() {
+        if (tabLayoutMain.getSelectedTabPosition() > 0) {
+            tabLayoutMain.selectTab(tabLayoutMain.getTabAt(0));
+        } else {
+            if (doubleBackPressed) {
+                finishAffinity();
+            } else {
+                doubleBackPressed = true;
+                Toast.makeText(this, getString(R.string.press_back_to_exit), Toast.LENGTH_SHORT).show();
+
+                android.os.Handler handler = new android.os.Handler();
+                handler.postDelayed(() -> {
+                    doubleBackPressed = false;
+                }, 2000);
+            }
+        }
     }
 }

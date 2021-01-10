@@ -38,4 +38,5 @@
     <string name="empty_chat_list">Chat list will appear here</string>
     <string name="empty_friend_list">Friend list will appear here</string>
     <string name="empty_request_list">Request list will appear here</string>
+    <string name="press_back_to_exit">Press back again to exit</string>
 </resources>
