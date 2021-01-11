@@ -39,4 +39,6 @@
     <string name="empty_friend_list">Friend list will appear here</string>
     <string name="empty_request_list">Request list will appear here</string>
     <string name="press_back_to_exit">Press back again to exit</string>
+    <string name="send_friend_request">Send Friend Request</string>
+    <string name="cancel_request">Cancel Request</string>
 </resources>
