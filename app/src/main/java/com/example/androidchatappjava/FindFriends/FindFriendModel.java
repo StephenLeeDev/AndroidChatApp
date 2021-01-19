@@ -1,12 +1,12 @@
 package com.example.androidchatappjava.FindFriends;
 
-public class FindFriendsModel {
+public class FindFriendModel {
     private String userName;
     private String photoName;
     private String userId;
     private boolean requestSend;
 
-    public FindFriendsModel(String userName, String photoName, String userId, boolean requestSend) {
+    public FindFriendModel(String userName, String photoName, String userId, boolean requestSend) {
         this.userName = userName;
         this.photoName = photoName;
         this.userId = userId;

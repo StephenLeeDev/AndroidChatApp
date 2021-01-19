@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/llFindFriends"
+        android:id="@+id/linearLayoutFindFriends"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -31,7 +31,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvFullName"
+                android:id="@+id/textViewFullName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="4dp"
@@ -40,13 +40,13 @@
                 tools:text="User Name" />
 
             <Button
-                android:id="@+id/btnSendRequest"
+                android:id="@+id/buttonSendRequest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/send_friend_request" />
 
             <Button
-                android:id="@+id/btnCancelRequest"
+                android:id="@+id/buttonCancelRequest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/cancel_request"
@@ -55,7 +55,7 @@
                 tools:visibility="visible" />
 
             <ProgressBar
-                android:id="@+id/pbRequest"
+                android:id="@+id/progressBarRequest"
                 style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -73,7 +73,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/llFindFriends"/>
-
+        app:layout_constraintTop_toBottomOf="@id/linearLayoutFindFriends"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
