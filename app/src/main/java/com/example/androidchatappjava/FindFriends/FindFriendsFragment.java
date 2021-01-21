@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.androidchatappjava.Common.NodeNames;
 import com.example.androidchatappjava.R;
@@ -86,12 +87,31 @@ public class FindFriendsFragment extends Fragment {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                findFriendModelList.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    String userId = dataSnapshot.getKey();
 
+                    if (userId.equals(currentUser.getUid())) {
+                        return;
+                    }
+
+                    if (dataSnapshot.child(NodeNames.getInstance().NAME).getValue() != null) {
+                        String fullName = dataSnapshot.child(NodeNames.getInstance().NAME).getValue().toString();
+                        String photoName = dataSnapshot.child(NodeNames.getInstance().PHOTO).getValue().toString();
+
+                        findFriendModelList.add(new FindFriendModel(fullName, photoName, userId, false));
+                        findFriendAdapter.notifyDataSetChanged();
+
+                        textViewEmptyFriendsList.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                    }
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), getContext().getString(R.string.failed_to_fetch_friends, error.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
