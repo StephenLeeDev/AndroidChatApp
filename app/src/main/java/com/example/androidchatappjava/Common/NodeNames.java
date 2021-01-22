@@ -16,6 +16,8 @@ public class NodeNames {
     }
 
     public String USERS = "Users";
+    public String FRIEND_REQUESTS = "FriendRequests";
+    public String REQUEST_TYPE = "RequestType";
     public String NAME = "Name";
     public String EMAIL = "Email";
     public String ONLINE = "Online";
