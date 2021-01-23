@@ -61,6 +61,14 @@ public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.Fi
         databaseReference = FirebaseDatabase.getInstance().getReference().child(NodeNames.getInstance().FRIEND_REQUESTS);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        if (model.isRequestSent()) {
+            holder.buttonSendRequest.setVisibility(View.GONE);
+            holder.buttonCancelRequest.setVisibility(View.VISIBLE);
+        } else {
+            holder.buttonSendRequest.setVisibility(View.VISIBLE);
+            holder.buttonCancelRequest.setVisibility(View.GONE);
+        }
+
         holder.buttonSendRequest.setOnClickListener(v -> {
             holder.buttonSendRequest.setVisibility(View.GONE);
             holder.progressBarRequest.setVisibility(View.VISIBLE);

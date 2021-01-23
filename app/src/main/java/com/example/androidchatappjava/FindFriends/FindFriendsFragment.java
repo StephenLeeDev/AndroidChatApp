@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.androidchatappjava.Common.Constants;
 import com.example.androidchatappjava.Common.NodeNames;
 import com.example.androidchatappjava.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,7 +36,7 @@ public class FindFriendsFragment extends Fragment {
     private List<FindFriendModel> findFriendModelList;
     private TextView textViewEmptyFriendsList;
 
-    private DatabaseReference reference;
+    private DatabaseReference reference, referenceFriendRequest;
     private FirebaseUser currentUser;
     private View progressBar;
 
@@ -83,6 +84,8 @@ public class FindFriendsFragment extends Fragment {
         textViewEmptyFriendsList.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
 
+        referenceFriendRequest = FirebaseDatabase.getInstance().getReference().child(NodeNames.getInstance().FRIEND_REQUESTS).child(currentUser.getUid());
+
         Query query = reference.orderByChild(NodeNames.getInstance().NAME);
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -92,12 +95,33 @@ public class FindFriendsFragment extends Fragment {
                     String userId = dataSnapshot.getKey();
 
                     if (userId.equals(currentUser.getUid())) {
-                        continue;
+                        return;
                     }
 
                     if (dataSnapshot.child(NodeNames.getInstance().NAME).getValue() != null) {
                         String fullName = dataSnapshot.child(NodeNames.getInstance().NAME).getValue().toString();
                         String photoName = dataSnapshot.child(NodeNames.getInstance().PHOTO).getValue().toString();
+
+                        referenceFriendRequest.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot1) {
+                                if (snapshot1.exists()) {
+                                    String requestType = snapshot1.child(NodeNames.getInstance().REQUEST_TYPE).getValue().toString();
+                                    if (Constants.getInstance().REQUEST_STATUS_SENT.equals(requestType)) {
+                                        findFriendModelList.add(new FindFriendModel(fullName, photoName, userId, true));
+                                        findFriendAdapter.notifyDataSetChanged();
+                                    }
+                                } else {
+                                    findFriendModelList.add(new FindFriendModel(fullName, photoName, userId, false));
+                                    findFriendAdapter.notifyDataSetChanged();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        });
 
                         findFriendModelList.add(new FindFriendModel(fullName, photoName, userId, false));
                         findFriendAdapter.notifyDataSetChanged();

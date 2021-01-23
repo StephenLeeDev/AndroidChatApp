@@ -4,13 +4,13 @@ public class FindFriendModel {
     private String userName;
     private String photoName;
     private String userId;
-    private boolean requestSend;
+    private boolean requestSent;
 
-    public FindFriendModel(String userName, String photoName, String userId, boolean requestSend) {
+    public FindFriendModel(String userName, String photoName, String userId, boolean requestSent) {
         this.userName = userName;
         this.photoName = photoName;
         this.userId = userId;
-        this.requestSend = requestSend;
+        this.requestSent = requestSent;
     }
 
     public String getUserName() {
@@ -37,11 +37,11 @@ public class FindFriendModel {
         this.userId = userId;
     }
 
-    public boolean isRequestSend() {
-        return requestSend;
+    public boolean isRequestSent() {
+        return requestSent;
     }
 
-    public void setRequestSend(boolean requestSend) {
-        this.requestSend = requestSend;
+    public void setRequestSent(boolean requestSent) {
+        this.requestSent = requestSent;
     }
 }
