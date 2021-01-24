@@ -97,6 +97,35 @@ public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.Fi
                 }
             });
         });
+
+        holder.buttonCancelRequest.setOnClickListener(v -> {
+            holder.buttonCancelRequest.setVisibility(View.GONE);
+            holder.progressBarRequest.setVisibility(View.VISIBLE);
+
+            userId = model.getUserId();
+            databaseReference.child(currentUser.getUid()).child(userId).child(NodeNames.getInstance().REQUEST_TYPE).setValue(null).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    databaseReference.child(userId).child(currentUser.getUid()).child(NodeNames.getInstance().REQUEST_TYPE).setValue(null).addOnCompleteListener(task1 -> {
+                        if (task1.isSuccessful()) {
+                            Toast.makeText(context, context.getString(R.string.request_cancel_successfully), Toast.LENGTH_SHORT).show();
+                            holder.buttonSendRequest.setVisibility(View.VISIBLE);
+                            holder.progressBarRequest.setVisibility(View.GONE);
+                            holder.buttonCancelRequest.setVisibility(View.GONE);
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.failed_to_cancel_friend_request, task.getException()), Toast.LENGTH_SHORT).show();
+                            holder.buttonSendRequest.setVisibility(View.GONE);
+                            holder.progressBarRequest.setVisibility(View.GONE);
+                            holder.buttonCancelRequest.setVisibility(View.VISIBLE);
+                        }
+                    });
+                } else {
+                    Toast.makeText(context, context.getString(R.string.failed_to_cancel_friend_request, task.getException()), Toast.LENGTH_SHORT).show();
+                    holder.buttonSendRequest.setVisibility(View.VISIBLE);
+                    holder.progressBarRequest.setVisibility(View.GONE);
+                    holder.buttonCancelRequest.setVisibility(View.GONE);
+                }
+            });
+        });
     }
 
     @Override
