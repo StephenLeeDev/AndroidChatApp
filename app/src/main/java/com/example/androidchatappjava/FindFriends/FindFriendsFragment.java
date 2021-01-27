@@ -95,7 +95,7 @@ public class FindFriendsFragment extends Fragment {
                     String userId = dataSnapshot.getKey();
 
                     if (userId.equals(currentUser.getUid())) {
-                        return;
+                        continue;
                     }
 
                     if (dataSnapshot.child(NodeNames.getInstance().NAME).getValue() != null) {

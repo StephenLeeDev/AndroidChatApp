@@ -46,6 +46,7 @@
     <string name="failed_to_send_friend_request">Failed to send friend request : %1$s</string>
     <string name="request_cancel_successfully">Request cancel successfully</string>
     <string name="failed_to_cancel_friend_request">Failed to cancel friend request : %1$s</string>
+    <string name="failed_to_deny_request">Failed to deny request : %1$s</string>
     <string name="accept">Accept</string>
     <string name="deny">Deny</string>
 </resources>

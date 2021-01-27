@@ -97,11 +97,11 @@ public class RequestsFragment extends Fragment {
                             referenceUser.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot2) {
-                                    String userName = dataSnapshot.child(NodeNames.getInstance().NAME).getValue().toString();
+                                    String userName = snapshot2.child(NodeNames.getInstance().NAME).getValue().toString();
                                     String photoName = "";
 
-                                    if (dataSnapshot.child(NodeNames.getInstance().PHOTO).getValue() != null) {
-                                        photoName = dataSnapshot.child(NodeNames.getInstance().PHOTO).getValue().toString();
+                                    if (snapshot2.child(NodeNames.getInstance().PHOTO).getValue() != null) {
+                                        photoName = snapshot2.child(NodeNames.getInstance().PHOTO).getValue().toString();
                                     }
 
                                     RequestModel model = new RequestModel(userId, userName, photoName);
