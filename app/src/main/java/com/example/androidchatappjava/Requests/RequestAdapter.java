@@ -34,13 +34,12 @@ import java.util.List;
 public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestViewHolder> {
 
     private Context context;
-    private List<RequestModel> list = new ArrayList<>();
+    private List<RequestModel> list;
     private DatabaseReference databaseReference;
     private FirebaseUser currentUser;
 
     public RequestAdapter(Context context, List<RequestModel> list) {
         this.context = context;
-        this.list.clear();
         this.list = list;
     }
 
@@ -59,12 +58,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
 
         StorageReference reference = FirebaseStorage.getInstance().getReference().child(Constants.getInstance().IMAGE_FOLDER + "/" + model.getPhotoName());
 
-        reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Glide.with(context).load(uri).placeholder(R.drawable.default_profile).error(R.drawable.default_profile).into(holder.imageViewProfile);
-            }
-        });
+        reference.getDownloadUrl().addOnSuccessListener(uri -> Glide.with(context).load(uri).placeholder(R.drawable.default_profile).error(R.drawable.default_profile).into(holder.imageViewProfile));
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child(NodeNames.getInstance().FRIEND_REQUESTS);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();

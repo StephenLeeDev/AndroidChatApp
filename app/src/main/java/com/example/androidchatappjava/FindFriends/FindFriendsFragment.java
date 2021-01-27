@@ -123,9 +123,6 @@ public class FindFriendsFragment extends Fragment {
                             }
                         });
 
-                        findFriendModelList.add(new FindFriendModel(fullName, photoName, userId, false));
-                        findFriendAdapter.notifyDataSetChanged();
-
                         textViewEmptyFriendsList.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
                     }
