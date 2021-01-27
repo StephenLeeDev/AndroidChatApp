@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -35,7 +36,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
 
     private Context context;
     private List<RequestModel> list;
-    private DatabaseReference databaseReference;
+    private DatabaseReference databaseReference, databaseReferenceChat;
     private FirebaseUser currentUser;
 
     public RequestAdapter(Context context, List<RequestModel> list) {
@@ -61,7 +62,43 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
         reference.getDownloadUrl().addOnSuccessListener(uri -> Glide.with(context).load(uri).placeholder(R.drawable.default_profile).error(R.drawable.default_profile).into(holder.imageViewProfile));
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child(NodeNames.getInstance().FRIEND_REQUESTS);
+        databaseReferenceChat = FirebaseDatabase.getInstance().getReference().child(NodeNames.getInstance().CHATS);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        holder.buttonAccept.setOnClickListener(v -> {
+            holder.progressBarDecision.setVisibility(View.VISIBLE);
+            holder.buttonDeny.setVisibility(View.GONE);
+            holder.buttonAccept.setVisibility(View.GONE);
+
+            final String userId = model.getUserId();
+            databaseReferenceChat.child(currentUser.getUid()).child(userId).child(NodeNames.getInstance().TIME_STAMP).setValue(ServerValue.TIMESTAMP).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    databaseReferenceChat.child(userId).child(currentUser.getUid()).child(NodeNames.getInstance().TIME_STAMP).setValue(ServerValue.TIMESTAMP).addOnCompleteListener(task1 -> {
+                        if (task1.isSuccessful()) {
+                            databaseReference.child(currentUser.getUid()).child(userId).child(NodeNames.getInstance().REQUEST_TYPE).setValue(Constants.getInstance().REQUEST_STATUS_ACCEPTED).addOnCompleteListener(task2 -> {
+                                if (task2.isSuccessful()) {
+                                    databaseReference.child(userId).child(currentUser.getUid()).child(NodeNames.getInstance().REQUEST_TYPE).setValue(Constants.getInstance().REQUEST_STATUS_ACCEPTED).addOnCompleteListener(task3 -> {
+                                        if (task3.isSuccessful()) {
+                                            holder.progressBarDecision.setVisibility(View.GONE);
+                                            holder.buttonDeny.setVisibility(View.VISIBLE);
+                                            holder.buttonAccept.setVisibility(View.VISIBLE);
+                                        } else {
+                                            handleException(holder, task3.getException());
+                                        }
+                                    });
+                                } else {
+                                    handleException(holder, task2.getException());
+                                }
+                            });
+                        } else {
+                            handleException(holder, task1.getException());
+                        }
+                    });
+                } else {
+                    handleException(holder, task.getException());
+                }
+            });
+        });
 
         holder.buttonDeny.setOnClickListener(v -> {
             holder.progressBarDecision.setVisibility(View.VISIBLE);
@@ -97,6 +134,15 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
                 }
             });
         });
+    }
+
+    private void handleException(RequestViewHolder holder, Exception exception) {
+
+        Toast.makeText(context, context.getString(R.string.failed_to_accept_request, exception), Toast.LENGTH_SHORT).show();
+
+        holder.progressBarDecision.setVisibility(View.GONE);
+        holder.buttonDeny.setVisibility(View.VISIBLE);
+        holder.buttonAccept.setVisibility(View.VISIBLE);
     }
 
     @Override

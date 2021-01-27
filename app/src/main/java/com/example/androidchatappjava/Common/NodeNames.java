@@ -22,4 +22,6 @@ public class NodeNames {
     public String EMAIL = "Email";
     public String ONLINE = "Online";
     public String PHOTO = "Photo";
+    public String CHATS = "Chats";
+    public String TIME_STAMP = "TimeStamp";
 }

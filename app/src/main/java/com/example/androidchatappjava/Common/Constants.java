@@ -18,4 +18,5 @@ public class Constants {
     public String IMAGE_FOLDER = "images";
     public String REQUEST_STATUS_SENT = "sent";
     public String REQUEST_STATUS_RECEIVED = "received";
+    public String REQUEST_STATUS_ACCEPTED = "accepted";
 }
