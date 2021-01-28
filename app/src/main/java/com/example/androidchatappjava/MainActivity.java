@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.androidchatappjava.Chats.ChatFragment;
 import com.example.androidchatappjava.FindFriends.FindFriendsFragment;
 import com.example.androidchatappjava.Profile.ProfileActivity;
 import com.example.androidchatappjava.Requests.RequestsFragment;
