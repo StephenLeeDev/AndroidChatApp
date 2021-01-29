@@ -55,7 +55,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvUnreadCount"
+                android:id="@+id/textViewUnreadCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/pink_circle"
@@ -66,7 +66,7 @@
                 android:textColor="@android:color/white" />
 
             <TextView
-                android:id="@+id/tvLastMessageTime"
+                android:id="@+id/textViewLastMessageTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="09:00"
