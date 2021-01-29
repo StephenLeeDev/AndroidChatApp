@@ -22,11 +22,11 @@ import java.util.List;
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder> {
 
     private Context context;
-    private List<ChatListModel> chatModelList;
+    private List<ChatListModel> chatListModelList;
 
-    public ChatListAdapter(Context context, List<ChatListModel> chatModelList) {
+    public ChatListAdapter(Context context, List<ChatListModel> chatListModelList) {
         this.context = context;
-        this.chatModelList = chatModelList;
+        this.chatListModelList = chatListModelList;
     }
 
     @NonNull
@@ -39,7 +39,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
     @Override
     public void onBindViewHolder(@NonNull ChatListViewHolder holder, int position) {
 
-        ChatListModel model = chatModelList.get(position);
+        ChatListModel model = chatListModelList.get(position);
         holder.textViewFullName.setText(model.getUserName());
 
         StorageReference reference = FirebaseStorage.getInstance().getReference().child(Constants.getInstance().IMAGE_FOLDER + "/" + model.getPhotoName());
@@ -50,7 +50,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
 
     @Override
     public int getItemCount() {
-        return chatModelList.size() ;
+        return chatListModelList.size() ;
     }
 
     public class ChatListViewHolder extends RecyclerView.ViewHolder {

@@ -50,4 +50,5 @@
     <string name="failed_to_accept_request">Failed to accept request : %1$s</string>
     <string name="accept">Accept</string>
     <string name="deny">Deny</string>
+    <string name="failed_to_fetch_chat_list">Failed to fetch chat list : %1$s</string>
 </resources>

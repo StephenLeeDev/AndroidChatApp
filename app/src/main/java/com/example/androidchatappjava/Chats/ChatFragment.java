@@ -2,48 +2,54 @@ package com.example.androidchatappjava.Chats;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.androidchatappjava.Common.NodeNames;
 import com.example.androidchatappjava.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ChatFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.List;
+
 public class ChatFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private RecyclerView recyclerViewChat;
+    private ProgressBar progressBar;
+    private TextView textViewEmptyChatList;
+    private ChatListAdapter chatListAdapter;
+    private List<ChatListModel> chatListModelList;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private DatabaseReference databaseReferenceChat, databaseReferenceUser;
+    private FirebaseUser currentUser;
+
+    private ChildEventListener childEventListener;
+    private Query query;
 
     public ChatFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ChatFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ChatFragment newInstance(String param1, String param2) {
+    public static ChatFragment newInstance() {
         ChatFragment fragment = new ChatFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,15 +58,102 @@ public class ChatFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_chat, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        recyclerViewChat = view.findViewById(R.id.recyclerViewChat);
+        progressBar = view.findViewById(R.id.progressBar);
+        textViewEmptyChatList = view.findViewById(R.id.textViewEmptyChatList);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+        recyclerViewChat.setLayoutManager(layoutManager);
+
+        recyclerViewChat.setAdapter(chatListAdapter);
+
+        databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child(NodeNames.getInstance().USERS);
+        databaseReferenceChat = FirebaseDatabase.getInstance().getReference().child(NodeNames.getInstance().CHATS);
+
+        query = databaseReferenceChat.orderByChild(NodeNames.getInstance().TIME_STAMP);
+
+        childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                updateList(snapshot, true, snapshot.getKey());
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+
+        query.addChildEventListener(childEventListener);
+        progressBar.setVisibility(View.VISIBLE);
+        textViewEmptyChatList.setVisibility(View.VISIBLE);
+    }
+
+    private void updateList(DataSnapshot dataSnapshot, boolean isNew, String userId) {
+
+        progressBar.setVisibility(View.GONE);
+        textViewEmptyChatList.setVisibility(View.GONE);
+
+        final String lastMessage = "";
+        final String lastMessageTime = "";
+        final String unreadCount = "";
+
+        databaseReferenceUser.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                String fullName = dataSnapshot.child(NodeNames.getInstance().NAME).getValue() != null ?
+                        dataSnapshot.child(NodeNames.getInstance().NAME).getValue().toString() : "";
+                String photoName = dataSnapshot.child(NodeNames.getInstance().PHOTO).getValue() != null ?
+                        dataSnapshot.child(NodeNames.getInstance().PHOTO).getValue().toString() : "";
+
+                ChatListModel model = new ChatListModel(userId, fullName, photoName, lastMessage, lastMessageTime, unreadCount);
+
+                chatListModelList.add(model);
+                chatListAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getActivity(), getActivity().getString(R.string.failed_to_fetch_chat_list, error.getMessage()), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        query.removeEventListener(childEventListener);
     }
 }
