@@ -1,6 +1,7 @@
 package com.example.androidchatappjava.Chats;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.androidchatappjava.ChatActivity;
 import com.example.androidchatappjava.Common.Constants;
+import com.example.androidchatappjava.Common.Extras;
 import com.example.androidchatappjava.R;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -45,6 +48,12 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
         StorageReference reference = FirebaseStorage.getInstance().getReference().child(Constants.getInstance().IMAGE_FOLDER + "/" + model.getPhotoName());
         reference.getDownloadUrl().addOnSuccessListener(uri -> {
             Glide.with(context).load(uri).placeholder(R.drawable.default_profile).error(R.drawable.default_profile).into(holder.imageViewProfile);
+        });
+
+        holder.linearLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ChatActivity.class);
+            intent.putExtra(Extras.getInstance().USER_KEY, model.getUserId());
+            context.startActivity(intent);
         });
     }
 

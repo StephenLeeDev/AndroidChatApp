@@ -17,11 +17,21 @@ public class NodeNames {
 
     public String USERS = "Users";
     public String FRIEND_REQUESTS = "FriendRequests";
-    public String REQUEST_TYPE = "RequestType";
+    public String CHATS = "Chats";
+    public String MESSAGES = "Messages";
+
     public String NAME = "Name";
     public String EMAIL = "Email";
     public String ONLINE = "Online";
     public String PHOTO = "Photo";
-    public String CHATS = "Chats";
+
+    public String REQUEST_TYPE = "RequestType";
+
     public String TIME_STAMP = "TimeStamp";
+
+    public String MESSAGE = "Message";
+    public String MESSAGE_ID = "MessageId";
+    public String MESSAGE_TYPE = "MessageType";
+    public String MESSAGE_TIME = "MessageTime";
+    public String MESSAGE_FROM = "MessageFrom";
 }

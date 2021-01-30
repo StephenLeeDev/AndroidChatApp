@@ -18,7 +18,7 @@ public class Util {
         return uniqueInstance;
     }
 
-    public boolean connectionAvailable(Context context) {
+    public static boolean connectionAvailable(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if (connectivityManager != null && connectivityManager.getActiveNetwork() != null) {

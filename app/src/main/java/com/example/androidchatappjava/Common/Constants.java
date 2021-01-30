@@ -19,4 +19,5 @@ public class Constants {
     public String REQUEST_STATUS_SENT = "sent";
     public String REQUEST_STATUS_RECEIVED = "received";
     public String REQUEST_STATUS_ACCEPTED = "accepted";
+    public String MESSAGE_TYPE_TEXT = "text";
 }

@@ -83,7 +83,8 @@ public class ChatFragment extends Fragment {
         recyclerViewChat.setAdapter(chatListAdapter);
 
         databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child(NodeNames.getInstance().USERS);
-        databaseReferenceChat = FirebaseDatabase.getInstance().getReference().child(NodeNames.getInstance().CHATS);
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        databaseReferenceChat = FirebaseDatabase.getInstance().getReference().child(NodeNames.getInstance().CHATS).child(currentUser.getUid());
 
         query = databaseReferenceChat.orderByChild(NodeNames.getInstance().TIME_STAMP);
 

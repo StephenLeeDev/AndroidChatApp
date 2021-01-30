@@ -52,4 +52,6 @@
     <string name="deny">Deny</string>
     <string name="failed_to_fetch_chat_list">Failed to fetch chat list : %1$s</string>
     <string name="enter_message">Enter message</string>
+    <string name="failed_to_send_message">Failed to send message : %1$s</string>
+    <string name="message_sent_successfully">Message sent successfully</string>
 </resources>
