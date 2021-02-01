@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.androidchatappjava.ChatActivity;
 import com.example.androidchatappjava.Common.Constants;
 import com.example.androidchatappjava.Common.Extras;
 import com.example.androidchatappjava.R;

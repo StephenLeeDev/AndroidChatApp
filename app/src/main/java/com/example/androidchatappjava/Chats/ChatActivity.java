@@ -1,4 +1,4 @@
-package com.example.androidchatappjava;
+package com.example.androidchatappjava.Chats;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +15,7 @@ import com.example.androidchatappjava.Common.Constants;
 import com.example.androidchatappjava.Common.Extras;
 import com.example.androidchatappjava.Common.NodeNames;
 import com.example.androidchatappjava.Common.Util;
+import com.example.androidchatappjava.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
