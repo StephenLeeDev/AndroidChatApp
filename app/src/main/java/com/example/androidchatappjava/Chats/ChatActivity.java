@@ -1,5 +1,7 @@
 package com.example.androidchatappjava.Chats;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -17,11 +19,17 @@ import com.example.androidchatappjava.Common.NodeNames;
 import com.example.androidchatappjava.Common.Util;
 import com.example.androidchatappjava.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -35,6 +43,14 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private RecyclerView recyclerViewMessages;
     private SwipeRefreshLayout swipeRefreshLayoutMessages;
+    private MessageAdapter messageAdapter;
+    private List<MessageModel> messageList;
+
+    private int currentPage = 1;
+    private static final int RECORD_PER_PAGE = 30;
+
+    private DatabaseReference databaseReference;
+    private ChildEventListener childEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +61,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         imageViewSend = findViewById(R.id.imageViewSend);
         editTextMessage = findViewById(R.id.editTextMessage);
+        recyclerViewMessages = findViewById(R.id.recyclerViewMessages);
+        swipeRefreshLayoutMessages = findViewById(R.id.swipeRefreshLayoutMessages);
 
         findViewById(R.id.imageViewSend).setOnClickListener(this::onClick);
 
@@ -54,6 +72,60 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         if (getIntent().hasExtra(Extras.getInstance().USER_KEY)) {
             chatUserId = getIntent().getStringExtra(Extras.getInstance().USER_KEY);
+        }
+
+        messageList = new ArrayList<>();
+        messageAdapter = new MessageAdapter(this, messageList);
+
+        loadMessage();
+        recyclerViewMessages.scrollToPosition(messageList.size() - 1);
+        swipeRefreshLayoutMessages.setOnRefreshListener(() -> {
+            currentPage ++;
+            loadMessage();
+        });
+    }
+
+    private void loadMessage() {
+        messageList.clear();
+        databaseReference = rootReference.child(NodeNames.getInstance().MESSAGES).child(currentUserId).child(chatUserId);
+
+        Query query = databaseReference.limitToLast(currentPage * RECORD_PER_PAGE);
+
+        if (childEventListener != null) {
+            query.removeEventListener(childEventListener);
+
+            childEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                    MessageModel message = snapshot.getValue(MessageModel.class);
+
+                    messageList.add(message);
+                    messageAdapter.notifyDataSetChanged();
+                    recyclerViewMessages.scrollToPosition(messageList.size() - 1);
+                    swipeRefreshLayoutMessages.setRefreshing(false);
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    swipeRefreshLayoutMessages.setRefreshing(false);
+                }
+            };
+            query.addChildEventListener(childEventListener);
         }
     }
 

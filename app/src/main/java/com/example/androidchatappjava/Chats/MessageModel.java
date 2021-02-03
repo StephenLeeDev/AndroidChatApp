@@ -4,13 +4,13 @@ public class MessageModel {
     private String message;
     private String messageFrom;
     private String messageId;
-    private String messageTime;
+    private long messageTime;
     private String messageType;
 
     public MessageModel() {
     }
 
-    public MessageModel(String message, String messageFrom, String messageId, String messageTime, String messageType) {
+    public MessageModel(String message, String messageFrom, String messageId, long messageTime, String messageType) {
         this.message = message;
         this.messageFrom = messageFrom;
         this.messageId = messageId;
@@ -42,11 +42,11 @@ public class MessageModel {
         this.messageId = messageId;
     }
 
-    public String getMessageTime() {
+    public long getMessageTime() {
         return messageTime;
     }
 
-    public void setMessageTime(String messageTime) {
+    public void setMessageTime(long messageTime) {
         this.messageTime = messageTime;
     }
 
