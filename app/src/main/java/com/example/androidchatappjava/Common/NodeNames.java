@@ -29,9 +29,9 @@ public class NodeNames {
 
     public String TIME_STAMP = "TimeStamp";
 
-    public String MESSAGE = "Message";
-    public String MESSAGE_ID = "MessageId";
-    public String MESSAGE_TYPE = "MessageType";
-    public String MESSAGE_TIME = "MessageTime";
-    public String MESSAGE_FROM = "MessageFrom";
+    public String MESSAGE = "message";
+    public String MESSAGE_ID = "messageId";
+    public String MESSAGE_TYPE = "messageType";
+    public String MESSAGE_TIME = "messageTime";
+    public String MESSAGE_FROM = "messageFrom";
 }

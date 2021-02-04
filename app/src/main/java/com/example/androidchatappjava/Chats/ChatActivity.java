@@ -93,40 +93,40 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         if (childEventListener != null) {
             query.removeEventListener(childEventListener);
-
-            childEventListener = new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    MessageModel message = snapshot.getValue(MessageModel.class);
-
-                    messageList.add(message);
-                    messageAdapter.notifyDataSetChanged();
-                    recyclerViewMessages.scrollToPosition(messageList.size() - 1);
-                    swipeRefreshLayoutMessages.setRefreshing(false);
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    swipeRefreshLayoutMessages.setRefreshing(false);
-                }
-            };
-            query.addChildEventListener(childEventListener);
         }
+
+        childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                MessageModel message = snapshot.getValue(MessageModel.class);
+
+                messageList.add(message);
+                messageAdapter.notifyDataSetChanged();
+                recyclerViewMessages.scrollToPosition(messageList.size() - 1);
+                swipeRefreshLayoutMessages.setRefreshing(false);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                swipeRefreshLayoutMessages.setRefreshing(false);
+            }
+        };
+        query.addChildEventListener(childEventListener);
     }
 
     private void sendMessage(String message, String messageType, String pushId) {

@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,12 +26,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChatFragment extends Fragment {
 
     private RecyclerView recyclerViewChat;
-    private ProgressBar progressBar;
+    private View progressBar;
     private TextView textViewEmptyChatList;
     private ChatListAdapter chatListAdapter;
     private List<ChatListModel> chatListModelList;
@@ -45,13 +45,6 @@ public class ChatFragment extends Fragment {
 
     public ChatFragment() {
         // Required empty public constructor
-    }
-
-    public static ChatFragment newInstance() {
-        ChatFragment fragment = new ChatFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -74,6 +67,9 @@ public class ChatFragment extends Fragment {
         recyclerViewChat = view.findViewById(R.id.recyclerViewChat);
         progressBar = view.findViewById(R.id.progressBar);
         textViewEmptyChatList = view.findViewById(R.id.textViewEmptyChatList);
+
+        chatListModelList = new ArrayList<>();
+        chatListAdapter = new ChatListAdapter(getActivity(), chatListModelList);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setReverseLayout(true);

@@ -53,12 +53,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             holder.linearLayoutSent.setVisibility(View.VISIBLE);
             holder.linearLayoutReceived.setVisibility(View.GONE);
             holder.textViewSentMessage.setText(model.getMessage());
-            holder.textViewSentMessageTime.setText(model.getMessageTime());
+            holder.textViewSentMessageTime.setText(messageTime);
         } else {
             holder.linearLayoutSent.setVisibility(View.GONE);
             holder.linearLayoutReceived.setVisibility(View.VISIBLE);
             holder.textViewReceivedMessage.setText(model.getMessage());
-            holder.textViewReceivedMessageTime.setText(model.getMessageTime());
+            holder.textViewReceivedMessageTime.setText(messageTime);
         }
     }
 
