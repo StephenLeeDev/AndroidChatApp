@@ -3,6 +3,7 @@ package com.example.androidchatappjava.Chats;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -74,8 +75,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             chatUserId = getIntent().getStringExtra(Extras.getInstance().USER_KEY);
         }
 
+        recyclerViewMessages.setLayoutManager(new LinearLayoutManager(this));
+
         messageList = new ArrayList<>();
         messageAdapter = new MessageAdapter(this, messageList);
+        recyclerViewMessages.setAdapter(messageAdapter);
 
         loadMessage();
         recyclerViewMessages.scrollToPosition(messageList.size() - 1);
