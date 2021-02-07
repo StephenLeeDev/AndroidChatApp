@@ -1,16 +1,23 @@
 package com.example.androidchatappjava.Chats;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.example.androidchatappjava.Common.Constants;
 import com.example.androidchatappjava.R;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -38,28 +45,69 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-        MessageModel model = messageList.get(position);
+        MessageModel message = messageList.get(position);
         firebaseAuth = FirebaseAuth.getInstance();
         String currentUser = firebaseAuth.getCurrentUser().getUid();
-        String fromUser = model.getMessageFrom();
+        String fromUser = message.getMessageFrom();
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 
-        String dateTime = simpleDateFormat.format(new Date(model.getMessageTime()));
+        String dateTime = simpleDateFormat.format(new Date(message.getMessageTime()));
         String [] splitString = dateTime.split(" ");
         String messageTime = splitString[1];
 
-        if (fromUser.equals(currentUser)) {
-            holder.linearLayoutSent.setVisibility(View.VISIBLE);
+        if(fromUser.equals(currentUser)){
+            if(message.getMessageType().equals(Constants.getInstance().MESSAGE_TYPE_TEXT)) {
+                holder.linearLayoutSent.setVisibility(View.VISIBLE);
+                holder.linearLayoutSentImage.setVisibility(View.GONE);
+            } else {
+                holder.linearLayoutSent.setVisibility(View.GONE);
+                holder.linearLayoutSentImage.setVisibility(View.VISIBLE);
+            }
+
             holder.linearLayoutReceived.setVisibility(View.GONE);
-            holder.textViewSentMessage.setText(model.getMessage());
+            holder.linearLayoutReceivedImage.setVisibility(View.GONE);
+
+            holder.textViewSentMessage.setText(message.getMessage());
             holder.textViewSentMessageTime.setText(messageTime);
+            holder.textViewSentImageTime.setText(messageTime);
+            Glide.with(context).load(message.getMessage()).placeholder(R.drawable.ic_image).into(holder.imageViewSent);
         } else {
+            if(message.getMessageType().equals(Constants.getInstance().MESSAGE_TYPE_TEXT)) {
+                holder.linearLayoutReceived.setVisibility(View.VISIBLE);
+                holder.linearLayoutReceivedImage.setVisibility(View.GONE);
+            } else {
+                holder.linearLayoutReceived.setVisibility(View.GONE);
+                holder.linearLayoutReceivedImage.setVisibility(View.VISIBLE);
+            }
+
             holder.linearLayoutSent.setVisibility(View.GONE);
-            holder.linearLayoutReceived.setVisibility(View.VISIBLE);
-            holder.textViewReceivedMessage.setText(model.getMessage());
+            holder.linearLayoutSentImage.setVisibility(View.GONE);
+
+            holder.textViewReceivedMessage.setText(message.getMessage());
             holder.textViewReceivedMessageTime.setText(messageTime);
+            holder.textViewReceivedImageTime.setText(messageTime);
+
+            Glide.with(context).load(message.getMessage()).placeholder(R.drawable.ic_image).into(holder.imageViewReceived);
         }
+
+        holder.constraintLayoutMessage.setTag(R.id.TAG_MESSAGE, message.getMessage());
+        holder.constraintLayoutMessage.setTag(R.id.TAG_MESSAGE_ID, message.getMessageId());
+        holder.constraintLayoutMessage.setTag(R.id.TAG_MESSAGE_TYPE, message.getMessageType());
+
+        holder.constraintLayoutMessage.setOnClickListener(view -> {
+            String messageType = view.getTag(R.id.TAG_MESSAGE_TYPE).toString();
+            Uri uri = Uri.parse(view.getTag(R.id.TAG_MESSAGE).toString());
+            if(messageType.equals(Constants.getInstance().MESSAGE_TYPE_VIDEO)) {
+                Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+                intent.setDataAndType(uri, "video/mp4");
+                context.startActivity(intent);
+            } else if(messageType.equals(Constants.getInstance().MESSAGE_TYPE_IMAGE)){
+                Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+                intent.setDataAndType(uri, "image/jpg");
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -69,19 +117,26 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     public class MessageViewHolder extends RecyclerView.ViewHolder {
 
-        private LinearLayout linearLayoutSent, linearLayoutReceived;
-        private TextView textViewSentMessage, textViewSentMessageTime, textViewReceivedMessage, textViewReceivedMessageTime;
+        private LinearLayout linearLayoutSent, linearLayoutReceived, linearLayoutSentImage, linearLayoutReceivedImage;
+        private TextView textViewSentMessage, textViewSentMessageTime, textViewReceivedMessage, textViewReceivedMessageTime, textViewSentImageTime, textViewReceivedImageTime;
+        private ImageView imageViewSent, imageViewReceived;
         private ConstraintLayout constraintLayoutMessage;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
 
             linearLayoutSent = itemView.findViewById(R.id.linearLayoutSent);
+            linearLayoutSentImage = itemView.findViewById(R.id.linearLayoutSentImage);
             linearLayoutReceived = itemView.findViewById(R.id.linearLayoutReceived);
+            linearLayoutReceivedImage = itemView.findViewById(R.id.linearLayoutReceivedImage);
             textViewSentMessage = itemView.findViewById(R.id.textViewSentMessage);
             textViewSentMessageTime = itemView.findViewById(R.id.textViewSentMessageTime);
             textViewReceivedMessage = itemView.findViewById(R.id.textViewReceivedMessage);
             textViewReceivedMessageTime = itemView.findViewById(R.id.textViewReceivedMessageTime);
+            textViewSentImageTime = itemView.findViewById(R.id.textViewSentImageTime);
+            textViewReceivedImageTime = itemView.findViewById(R.id.textViewReceivedImageTime);
+            imageViewSent = itemView.findViewById(R.id.imageViewSent);
+            imageViewReceived = itemView.findViewById(R.id.imageViewReceived);
             constraintLayoutMessage = itemView.findViewById(R.id.constraintLayoutMessage);
         }
     }

@@ -55,8 +55,9 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayoutSent"
         android:visibility="gone"
         tools:visibility="visible">
+
         <ImageView
-            android:id="@+id/ivSent"
+            android:id="@+id/imageViewSent"
             android:layout_width="90dp"
             android:layout_height="100dp"
             android:src="@drawable/ic_image"/>
