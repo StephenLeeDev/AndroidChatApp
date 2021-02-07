@@ -20,6 +20,9 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.androidchatappjava.Common.Constants;
@@ -27,6 +30,10 @@ import com.example.androidchatappjava.Common.Extras;
 import com.example.androidchatappjava.Common.NodeNames;
 import com.example.androidchatappjava.Common.Util;
 import com.example.androidchatappjava.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -37,6 +44,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -53,6 +61,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 102;
     private static final int REQUEST_CODE_PICK_VIDEO = 103;
     private static final int REQUEST_CODE_FORWARD_MESSAGE = 104;
+
+    private LinearLayout linearLayoutProgress;
 
     private Context context;
     private ImageView imageViewAttachment, imageViewSend;
@@ -82,6 +92,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         context = this;
 
+        linearLayoutProgress = findViewById(R.id.linearLayoutProgress);
         imageViewSend = findViewById(R.id.imageViewSend);
         imageViewAttachment = findViewById(R.id.imageViewAttachment);
         editTextMessage = findViewById(R.id.editTextMessage);
@@ -296,7 +307,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         StorageReference fileRef = storageReference.child(folderName).child(fileName);
         UploadTask uploadTask = fileRef.putFile(uri);
 
-//        uploadProgress(uploadTask, fileRef, pushId, messageType);
+        uploadProgress(uploadTask, fileRef, pushId, messageType);
     }
 
     private void uploadBytes(ByteArrayOutputStream bytes, String messageType) {
@@ -310,7 +321,61 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         StorageReference fileRef = storageReference.child(folderName).child(fileName);
         UploadTask uploadTask = fileRef.putBytes(bytes.toByteArray());
 
-//        uploadProgress(uploadTask, fileRef, pushId, messageType);
+        uploadProgress(uploadTask, fileRef, pushId, messageType);
+    }
+
+    private void uploadProgress(final UploadTask task, final StorageReference filePath, final String pushId, final String messageType) {
+
+        final View view = getLayoutInflater().inflate(R.layout.file_progress, null);
+        final ProgressBar progressBarProgress = view.findViewById(R.id.progressBarProgress);
+        final TextView textViewFileProgress = view.findViewById(R.id.textViewFileProgress);
+        final ImageView imageViewPlay = view.findViewById(R.id.imageViewPlay);
+        final ImageView imageViewPause = view.findViewById(R.id.imageViewPause);
+        ImageView imageViewCancel = view.findViewById(R.id.imageViewCancel);
+
+        imageViewPause.setOnClickListener(v -> {
+            task.pause();
+            imageViewPlay.setVisibility(View.VISIBLE);
+            imageViewPause.setVisibility(View.GONE);
+        });
+
+        imageViewPlay.setOnClickListener(v -> {
+            task.resume();
+            imageViewPause.setVisibility(View.VISIBLE);
+            imageViewPlay.setVisibility(View.GONE);
+        });
+
+        imageViewCancel.setOnClickListener(v -> task.cancel());
+
+        linearLayoutProgress.addView(view);
+        textViewFileProgress.setText(getString(R.string.upload_progress, messageType, "0"));
+
+        task.addOnProgressListener(taskSnapshot -> {
+            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+
+            progressBarProgress.setProgress((int) progress);
+            textViewFileProgress.setText(getString(R.string.upload_progress, messageType, String.valueOf(progressBarProgress.getProgress())));
+
+        });
+
+        task.addOnCompleteListener(task1 -> {
+            linearLayoutProgress.removeView(view);
+            if (task1.isSuccessful()) {
+                filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String downloadUrl = uri.toString();
+                        sendMessage(downloadUrl, messageType, pushId);
+                    }
+                });
+            }
+        });
+
+        task.addOnFailureListener(e -> {
+            linearLayoutProgress.removeView(view);
+            Toast.makeText(ChatActivity.this, getString(R.string.failed_to_upload, e.getMessage()), Toast.LENGTH_SHORT).show();
+        });
+
     }
 
 }

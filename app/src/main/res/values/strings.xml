@@ -58,4 +58,6 @@
     <string name="gallery">Gallery</string>
     <string name="video">Video</string>
     <string name="permission_required_to_access_files">Permission required to access files</string>
+    <string name="upload_progress">Uploading %1$s (%2$s %%)</string>
+    <string name="failed_to_upload">Failed to upload : %1$s</string>
 </resources>
