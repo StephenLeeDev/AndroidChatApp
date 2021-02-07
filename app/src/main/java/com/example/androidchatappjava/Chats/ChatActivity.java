@@ -3,13 +3,21 @@ package com.example.androidchatappjava.Chats;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -19,6 +27,7 @@ import com.example.androidchatappjava.Common.Extras;
 import com.example.androidchatappjava.Common.NodeNames;
 import com.example.androidchatappjava.Common.Util;
 import com.example.androidchatappjava.R;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -28,11 +37,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static android.provider.MediaStore.ACTION_IMAGE_CAPTURE;
+
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private static final int REQUEST_CODE_PICK_IMAGE = 101;
+    private static final int REQUEST_CODE_CAPTURE_IMAGE = 102;
+    private static final int REQUEST_CODE_PICK_VIDEO = 103;
+    private static final int REQUEST_CODE_FORWARD_MESSAGE = 104;
 
     private Context context;
     private ImageView imageViewAttachment, imageViewSend;
@@ -53,6 +70,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private DatabaseReference databaseReference;
     private ChildEventListener childEventListener;
 
+    private BottomSheetDialog bottomSheetDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,11 +80,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         context = this;
 
         imageViewSend = findViewById(R.id.imageViewSend);
+        imageViewAttachment = findViewById(R.id.imageViewAttachment);
         editTextMessage = findViewById(R.id.editTextMessage);
         recyclerViewMessages = findViewById(R.id.recyclerViewMessages);
         swipeRefreshLayoutMessages = findViewById(R.id.swipeRefreshLayoutMessages);
 
         findViewById(R.id.imageViewSend).setOnClickListener(this::onClick);
+        findViewById(R.id.imageViewAttachment).setOnClickListener(this::onClick);
 
         firebaseAuth = FirebaseAuth.getInstance();
         rootReference = FirebaseDatabase.getInstance().getReference();
@@ -87,6 +108,14 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             currentPage ++;
             loadMessage();
         });
+
+        bottomSheetDialog = new BottomSheetDialog(this);
+        View view = getLayoutInflater().inflate(R.layout.chat_file_options, null);
+        view.findViewById(R.id.linearLayoutCamera).setOnClickListener(this);
+        view.findViewById(R.id.linearLayoutGallery).setOnClickListener(this);
+        view.findViewById(R.id.linearLayoutVideo).setOnClickListener(this);
+        view.findViewById(R.id.imageViewClose).setOnClickListener(this);
+        bottomSheetDialog.setContentView(view);
     }
 
     private void loadMessage() {
@@ -168,7 +197,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.imageViewSend:
+            case R.id.imageViewSend: {
                 if (Util.connectionAvailable(this)) {
                     DatabaseReference userMessagePush = rootReference.child(NodeNames.getInstance().MESSAGES).child(currentUserId).child(chatUserId).push();
                     String pushId = userMessagePush.getKey();
@@ -177,6 +206,72 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     Toast.makeText(this, R.string.no_internet, Toast.LENGTH_SHORT).show();
                 }
                 break;
+            }
+            case R.id.imageViewAttachment: {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    if (bottomSheetDialog != null) {
+                        bottomSheetDialog.show();
+                    }
+                } else {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                }
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                if (inputMethodManager != null) {
+                    inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+                break;
+            }
+            case R.id.linearLayoutCamera: {
+                bottomSheetDialog.dismiss();
+                Intent intent = new Intent(ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, REQUEST_CODE_CAPTURE_IMAGE);
+                break;
+            }
+
+            case R.id.linearLayoutGallery: {
+                bottomSheetDialog.dismiss();
+                Intent intent = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);
+                break;
+            }
+            case R.id.linearLayoutVideo: {
+                bottomSheetDialog.dismiss();
+                Intent intent = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, REQUEST_CODE_PICK_VIDEO);
+                break;
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_CODE_CAPTURE_IMAGE) {
+                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            } else if (requestCode == REQUEST_CODE_PICK_IMAGE) {
+                Uri uri = data.getData();
+            } else if (requestCode == REQUEST_CODE_PICK_VIDEO) {
+                Uri uri = data.getData();
+            }
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (bottomSheetDialog != null) {
+                    bottomSheetDialog.show();
+                } else {
+                    Toast.makeText(this, getString(R.string.permission_required_to_access_files), Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 }

@@ -57,4 +57,5 @@
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="video">Video</string>
+    <string name="permission_required_to_access_files">Permission required to access files</string>
 </resources>
