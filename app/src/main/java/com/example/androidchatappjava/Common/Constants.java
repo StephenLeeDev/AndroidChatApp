@@ -19,5 +19,12 @@ public class Constants {
     public String REQUEST_STATUS_SENT = "sent";
     public String REQUEST_STATUS_RECEIVED = "received";
     public String REQUEST_STATUS_ACCEPTED = "accepted";
+
+    public String MESSAGE_VIDEOS ="message_videos";
+    public String MESSAGE_IMAGES ="message_images";
+
     public String MESSAGE_TYPE_TEXT = "text";
+    public String MESSAGE_TYPE_IMAGE ="image" ;
+    public String MESSAGE_TYPE_VIDEO ="video" ;
+
 }
