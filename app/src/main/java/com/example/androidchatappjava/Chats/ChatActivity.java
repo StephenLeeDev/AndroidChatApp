@@ -2,6 +2,7 @@ package com.example.androidchatappjava.Chats;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -65,7 +67,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private LinearLayout linearLayoutProgress;
 
     private Context context;
-    private ImageView imageViewAttachment, imageViewSend;
+    private ImageView imageViewAttachment, imageViewSend, imageViewProfile;
     private EditText editTextMessage;
 
     private DatabaseReference rootReference;
@@ -91,6 +93,19 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_chat);
 
         context = this;
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("");
+            ViewGroup actionBarLayout = (ViewGroup) getLayoutInflater().inflate(R.layout.custom_action_bar, null);
+
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setElevation(0);
+
+            actionBar.setCustomView(actionBarLayout);
+            actionBar.setDisplayOptions(actionBar.getDisplayOptions()|ActionBar.DISPLAY_SHOW_CUSTOM);
+        }
 
         linearLayoutProgress = findViewById(R.id.linearLayoutProgress);
         imageViewSend = findViewById(R.id.imageViewSend);
