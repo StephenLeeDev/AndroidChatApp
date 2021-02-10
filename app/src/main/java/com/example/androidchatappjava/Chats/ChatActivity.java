@@ -17,6 +17,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -27,6 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.androidchatappjava.Common.Constants;
 import com.example.androidchatappjava.Common.Extras;
 import com.example.androidchatappjava.Common.NodeNames;
@@ -69,6 +72,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private Context context;
     private ImageView imageViewAttachment, imageViewSend, imageViewProfile;
     private EditText editTextMessage;
+    private TextView textViewUserName;
 
     private DatabaseReference rootReference;
     private FirebaseAuth firebaseAuth;
@@ -86,6 +90,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private ChildEventListener childEventListener;
 
     private BottomSheetDialog bottomSheetDialog;
+    private String userName, photoName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +118,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         editTextMessage = findViewById(R.id.editTextMessage);
         recyclerViewMessages = findViewById(R.id.recyclerViewMessages);
         swipeRefreshLayoutMessages = findViewById(R.id.swipeRefreshLayoutMessages);
+        textViewUserName = findViewById(R.id.textViewUserName);
 
         findViewById(R.id.imageViewSend).setOnClickListener(this::onClick);
         findViewById(R.id.imageViewAttachment).setOnClickListener(this::onClick);
@@ -123,6 +129,23 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         if (getIntent().hasExtra(Extras.getInstance().USER_KEY)) {
             chatUserId = getIntent().getStringExtra(Extras.getInstance().USER_KEY);
+        }
+
+        if (getIntent().hasExtra(Extras.getInstance().USER_NAME)) {
+            userName = getIntent().getStringExtra(Extras.getInstance().USER_NAME);
+        }
+
+        if (getIntent().hasExtra(Extras.getInstance().PHOTO_NAME)) {
+            photoName = getIntent().getStringExtra(Extras.getInstance().PHOTO_NAME);
+        }
+
+        textViewUserName.setText(userName);
+
+        if (TextUtils.isEmpty(photoName)) {
+            StorageReference storageReferencePhoto = FirebaseStorage.getInstance().getReference().child(Constants.getInstance().IMAGE_FOLDER).child(photoName);
+            storageReferencePhoto.getDownloadUrl().addOnSuccessListener(uri -> {
+                Glide.with(this).load(uri).placeholder(R.drawable.default_profile).into(imageViewProfile);
+            });
         }
 
         recyclerViewMessages.setLayoutManager(new LinearLayoutManager(this));
@@ -393,4 +416,18 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        switch (itemId) {
+            case android.R.id.home:
+                finish();
+                break;
+
+            default:
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
