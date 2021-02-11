@@ -166,8 +166,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             inflater.inflate(R.menu.menu_chat_options, menu);
 
             String selectedMessageType = String.valueOf(constraintLayoutSelectedView.getTag(R.id.TAG_MESSAGE_TYPE));
-            if(selectedMessageType.equals(Constants.getInstance().MESSAGE_TYPE_TEXT))
-            {
+            if(selectedMessageType.equals(Constants.getInstance().MESSAGE_TYPE_TEXT)) {
                 MenuItem itemDownload = menu.findItem(R.id.menuDownload);
                 itemDownload.setVisible(false);
             }
@@ -196,7 +195,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     actionMode.finish();
                     break;
                 case  R.id.menuDownload:
-                    Toast.makeText(context, "menuDownload", Toast.LENGTH_SHORT).show();
+                    if(context instanceof  ChatActivity) {
+                        ((ChatActivity)context).downloadFile(selectedMessageId, selectedMessageType, false);
+                    }
                     actionMode.finish();
                     break;
                 case  R.id.menuShare:
