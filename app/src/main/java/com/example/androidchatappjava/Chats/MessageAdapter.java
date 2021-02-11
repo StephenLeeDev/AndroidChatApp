@@ -4,11 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +34,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private Context context;
     private List<MessageModel> messageList;
     private FirebaseAuth firebaseAuth;
+
+    private ActionMode actionMode;
 
     public MessageAdapter(Context context, List<MessageModel> messageList) {
         this.context = context;
@@ -108,6 +114,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 context.startActivity(intent);
             }
         });
+
+        holder.constraintLayoutMessage.setOnLongClickListener(v -> {
+            if (actionMode != null) {
+                return false;
+            }
+
+            actionMode = ((AppCompatActivity)context).startSupportActionMode(actionModeCallback);
+            holder.constraintLayoutMessage.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
+            return true;
+        });
     }
 
     @Override
@@ -140,4 +156,49 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             constraintLayoutMessage = itemView.findViewById(R.id.constraintLayoutMessage);
         }
     }
+
+    public ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.menu_chat_options, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            int itemId = item.getItemId();
+            switch (itemId)
+            {
+                case  R.id.menuDelete:
+                    Toast.makeText(context, "menuDelete", Toast.LENGTH_SHORT).show();
+                    actionMode.finish();
+                    break;
+                case  R.id.menuDownload:
+                    Toast.makeText(context, "menuDownload", Toast.LENGTH_SHORT).show();
+                    actionMode.finish();
+                    break;
+                case  R.id.menuShare:
+                    Toast.makeText(context, "menuShare", Toast.LENGTH_SHORT).show();
+                    actionMode.finish();
+                    break;
+                case  R.id.menuForward:
+                    Toast.makeText(context, "menuForward", Toast.LENGTH_SHORT).show();
+                    actionMode.finish();
+                    break;
+
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mode = null;
+        }
+    };
 }
