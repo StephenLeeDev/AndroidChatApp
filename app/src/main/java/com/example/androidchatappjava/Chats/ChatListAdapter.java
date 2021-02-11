@@ -52,6 +52,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatLi
         holder.linearLayout.setOnClickListener(v -> {
             Intent intent = new Intent(context, ChatActivity.class);
             intent.putExtra(Extras.getInstance().USER_KEY, model.getUserId());
+            intent.putExtra(Extras.getInstance().USER_NAME, model.getUserName());
             context.startActivity(intent);
         });
     }

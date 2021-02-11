@@ -119,11 +119,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                             hashMap.put(NodeNames.getInstance().PHOTO, serverFileUri.getPath());
 
                             databaseReference.child(userId).setValue(hashMap).addOnCompleteListener(task2 -> {
-                                if (task2.isSuccessful()) {
-                                    finish();
-                                } else {
-                                    Toast.makeText(this, getString(R.string.fail_to_update_profile, task2.getException()), Toast.LENGTH_SHORT).show();
-                                }
+                                finish();
                             });
                         } else {
                             Toast.makeText(this, getString(R.string.fail_to_update_profile, task1.getException()), Toast.LENGTH_SHORT).show();
@@ -167,18 +163,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         } else {
             PopupMenu popupMenu = new PopupMenu(this, view);
             popupMenu.getMenuInflater().inflate(R.menu.menu_picture, popupMenu.getMenu());
-            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    int id = item.getItemId();
+            popupMenu.setOnMenuItemClickListener(item -> {
+                int id = item.getItemId();
 
-                    if (id == R.id.menu_change_picture) {
-                        pickImage();
-                    } else if (id == R.id.menu_remove_picture) {
-                        removePhoto();
-                    }
-                    return false;
+                if (id == R.id.menu_change_picture) {
+                    pickImage();
+                } else if (id == R.id.menu_remove_picture) {
+                    removePhoto();
                 }
+                return false;
             });
             popupMenu.show();
         }

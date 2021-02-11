@@ -129,12 +129,12 @@ public class ChatFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                String fullName = dataSnapshot.child(NodeNames.getInstance().NAME).getValue() != null ?
-                        dataSnapshot.child(NodeNames.getInstance().NAME).getValue().toString() : "";
-                String photoName = dataSnapshot.child(NodeNames.getInstance().PHOTO).getValue() != null ?
-                        dataSnapshot.child(NodeNames.getInstance().PHOTO).getValue().toString() : "";
+                String fullName = snapshot.child(NodeNames.getInstance().NAME).getValue() != null ?
+                        snapshot.child(NodeNames.getInstance().NAME).getValue().toString() : "";
+                String photoName = snapshot.child(NodeNames.getInstance().PHOTO).getValue() != null ?
+                        snapshot.child(NodeNames.getInstance().PHOTO).getValue().toString() : "";
 
-                ChatListModel model = new ChatListModel(userId, fullName, photoName, lastMessage, lastMessageTime, unreadCount);
+                ChatListModel model = new ChatListModel(userId, fullName, photoName, unreadCount, lastMessage, lastMessageTime);
 
                 chatListModelList.add(model);
                 chatListAdapter.notifyDataSetChanged();

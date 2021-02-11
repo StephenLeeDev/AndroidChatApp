@@ -119,6 +119,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         recyclerViewMessages = findViewById(R.id.recyclerViewMessages);
         swipeRefreshLayoutMessages = findViewById(R.id.swipeRefreshLayoutMessages);
         textViewUserName = findViewById(R.id.textViewUserName);
+        imageViewProfile = findViewById(R.id.imageViewProfile);
 
         findViewById(R.id.imageViewSend).setOnClickListener(this::onClick);
         findViewById(R.id.imageViewAttachment).setOnClickListener(this::onClick);
@@ -129,19 +130,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         if (getIntent().hasExtra(Extras.getInstance().USER_KEY)) {
             chatUserId = getIntent().getStringExtra(Extras.getInstance().USER_KEY);
+            photoName = chatUserId + ".jpg";
         }
 
         if (getIntent().hasExtra(Extras.getInstance().USER_NAME)) {
             userName = getIntent().getStringExtra(Extras.getInstance().USER_NAME);
         }
 
-        if (getIntent().hasExtra(Extras.getInstance().PHOTO_NAME)) {
-            photoName = getIntent().getStringExtra(Extras.getInstance().PHOTO_NAME);
-        }
-
         textViewUserName.setText(userName);
 
-        if (TextUtils.isEmpty(photoName)) {
+        if(!TextUtils.isEmpty(photoName) && photoName!=null) {
             StorageReference storageReferencePhoto = FirebaseStorage.getInstance().getReference().child(Constants.getInstance().IMAGE_FOLDER).child(photoName);
             storageReferencePhoto.getDownloadUrl().addOnSuccessListener(uri -> {
                 Glide.with(this).load(uri).placeholder(R.drawable.default_profile).into(imageViewProfile);
