@@ -196,7 +196,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
+                loadMessage();
             }
 
             @Override
@@ -428,4 +428,51 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public void deleteMessage(final String messageId, final String messageType){
+
+        DatabaseReference databaseReference = rootReference.child(NodeNames.getInstance().MESSAGES)
+                .child(currentUserId).child(chatUserId).child(messageId);
+
+        databaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()) {
+                    DatabaseReference databaseReferenceChatUser = rootReference.child(NodeNames.getInstance().MESSAGES)
+                            .child(chatUserId).child(currentUserId).child(messageId);
+
+                    databaseReferenceChatUser.removeValue().addOnCompleteListener(task1 -> {
+                        if(task1.isSuccessful()) {
+                            Toast.makeText(ChatActivity.this, R.string.message_deleted_successfully, Toast.LENGTH_SHORT).show();
+                            if(!messageType.equals(Constants.getInstance().MESSAGE_TYPE_TEXT)) {
+                                StorageReference rootRef = FirebaseStorage.getInstance().getReference();
+                                String folder = messageType.equals(Constants.getInstance().MESSAGE_TYPE_VIDEO)?Constants.getInstance().MESSAGE_VIDEOS:Constants.getInstance().MESSAGE_IMAGES;
+                                String fileName = messageType.equals(Constants.getInstance().MESSAGE_TYPE_VIDEO)?messageId +".mp4": messageId+".jpg";
+                                StorageReference fileRef = rootRef.child(folder).child(fileName);
+
+                                fileRef.delete().addOnCompleteListener(task2 -> {
+                                    if(!task2.isSuccessful())
+                                    {
+                                        Toast.makeText(ChatActivity.this,
+                                                getString(R.string.failed_to_delete_file, task2.getException()), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        } else {
+                            Toast.makeText(ChatActivity.this, getString(R.string.failed_to_delete_message, task1.getException()),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    Toast.makeText(ChatActivity.this, getString( R.string.failed_to_delete_message, task.getException()),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+
+
+    }
+
 }

@@ -36,6 +36,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private FirebaseAuth firebaseAuth;
 
     private ActionMode actionMode;
+    private ConstraintLayout constraintLayoutSelectedView;
 
     public MessageAdapter(Context context, List<MessageModel> messageList) {
         this.context = context;
@@ -120,6 +121,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 return false;
             }
 
+            constraintLayoutSelectedView = holder.constraintLayoutMessage;
             actionMode = ((AppCompatActivity)context).startSupportActionMode(actionModeCallback);
             holder.constraintLayoutMessage.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
             return true;
@@ -162,6 +164,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.menu_chat_options, menu);
+
+            String selectedMessageType = String.valueOf(constraintLayoutSelectedView.getTag(R.id.TAG_MESSAGE_TYPE));
+            if(selectedMessageType.equals(Constants.getInstance().MESSAGE_TYPE_TEXT))
+            {
+                MenuItem itemDownload = menu.findItem(R.id.menuDownload);
+                itemDownload.setVisible(false);
+            }
             return true;
         }
 
@@ -173,10 +182,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             int itemId = item.getItemId();
+
+            String selectedMessageId = String.valueOf(constraintLayoutSelectedView.getTag(R.id.TAG_MESSAGE_ID));
+            String selectedMessage = String.valueOf(constraintLayoutSelectedView.getTag(R.id.TAG_MESSAGE));
+            String selectedMessageType = String.valueOf(constraintLayoutSelectedView.getTag(R.id.TAG_MESSAGE_TYPE));
+
             switch (itemId)
             {
                 case  R.id.menuDelete:
-                    Toast.makeText(context, "menuDelete", Toast.LENGTH_SHORT).show();
+                    if(context instanceof  ChatActivity) {
+                        ((ChatActivity)context).deleteMessage(selectedMessageId, selectedMessageType);
+                    }
                     actionMode.finish();
                     break;
                 case  R.id.menuDownload:
@@ -199,6 +215,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             mode = null;
+            constraintLayoutSelectedView.setBackgroundColor(context.getResources().getColor(R.color.chat_background));
+
         }
     };
 }
