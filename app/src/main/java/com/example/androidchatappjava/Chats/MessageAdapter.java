@@ -192,21 +192,32 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     if(context instanceof  ChatActivity) {
                         ((ChatActivity)context).deleteMessage(selectedMessageId, selectedMessageType);
                     }
-                    actionMode.finish();
+                    mode.finish();
                     break;
                 case  R.id.menuDownload:
                     if(context instanceof  ChatActivity) {
                         ((ChatActivity)context).downloadFile(selectedMessageId, selectedMessageType, false);
                     }
-                    actionMode.finish();
+                    mode.finish();
                     break;
                 case  R.id.menuShare:
-                    Toast.makeText(context, "menuShare", Toast.LENGTH_SHORT).show();
-                    actionMode.finish();
+                    if(selectedMessageType.equals(Constants.getInstance().MESSAGE_TYPE_TEXT)){
+                        Intent intentShare = new Intent();
+                        intentShare.setAction(Intent.ACTION_SEND);
+                        intentShare.putExtra(Intent.EXTRA_TEXT, selectedMessage);
+                        intentShare.setType("text/plain");
+                        context.startActivity(intentShare);
+                    }
+                    else {
+                        if(context instanceof  ChatActivity) {
+                            ((ChatActivity)context).downloadFile(selectedMessageId, selectedMessageType, true);
+                        }
+                    }
+                    mode.finish();
                     break;
                 case  R.id.menuForward:
                     Toast.makeText(context, "menuForward", Toast.LENGTH_SHORT).show();
-                    actionMode.finish();
+                    mode.finish();
                     break;
 
             }
