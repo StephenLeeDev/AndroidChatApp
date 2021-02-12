@@ -62,8 +62,7 @@ public class SelectFriendAdapter extends RecyclerView.Adapter<SelectFriendAdapte
             @Override
             public void onClick(View view) {
                 if(context instanceof  SelectFriendActivity) {
-                    ((SelectFriendActivity)context).returnSelectedFriend( friendModel.getUserId(), friendModel.getUserName(),
-                            friendModel.getUserId() + ".jpg"  );
+                    ((SelectFriendActivity)context).returnSelectedFriend( friendModel.getUserId(), friendModel.getUserName(), friendModel.getUserId() + ".jpg");
                 }
             }
         });

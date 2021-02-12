@@ -45,8 +45,7 @@ public class SelectFriendActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_friend);
 
-        if(getIntent().hasExtra(Extras.getInstance().MESSAGE))
-        {
+        if (getIntent().hasExtra(Extras.getInstance().MESSAGE)) {
             selectedMessage = getIntent().getStringExtra(Extras.getInstance().MESSAGE);
             selectedMessageId = getIntent().getStringExtra(Extras.getInstance().MESSAGE_ID);
             selectedMessageType = getIntent().getStringExtra(Extras.getInstance().MESSAGE_TYPE);

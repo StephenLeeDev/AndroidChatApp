@@ -166,6 +166,33 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         view.findViewById(R.id.linearLayoutVideo).setOnClickListener(this);
         view.findViewById(R.id.imageViewClose).setOnClickListener(this);
         bottomSheetDialog.setContentView(view);
+
+        if (getIntent().hasExtra(Extras.MESSAGE) && getIntent().hasExtra(Extras.MESSAGE_ID) && getIntent().hasExtra(Extras.MESSAGE_TYPE)) {
+            String message = getIntent().getStringExtra(Extras.MESSAGE);
+            String messageId = getIntent().getStringExtra(Extras.MESSAGE_ID);
+            final String messageType = getIntent().getStringExtra(Extras.MESSAGE_TYPE);
+
+            DatabaseReference messageRef = rootReference.child(NodeNames.getInstance().MESSAGES).child(currentUserId).child(chatUserId).push();
+            final String newMessageId = messageRef.getKey();
+
+            if(messageType.equals(Constants.getInstance().MESSAGE_TYPE_TEXT)) {
+                sendMessage(message, messageType, newMessageId);
+            } else{
+                StorageReference rootRef = FirebaseStorage.getInstance().getReference();
+                String folder = messageType.equals( Constants.getInstance().MESSAGE_TYPE_VIDEO)? Constants.getInstance().MESSAGE_VIDEOS:Constants.getInstance().MESSAGE_IMAGES;
+                String oldFileName = messageType.equals( Constants.getInstance().MESSAGE_TYPE_VIDEO)?messageId + ".mp4": messageId+".jpg";
+                String newFileName = messageType.equals( Constants.getInstance().MESSAGE_TYPE_VIDEO)?newMessageId + ".mp4": newMessageId+".jpg";
+
+                final String localFilePath = getExternalFilesDir(null).getAbsolutePath() + "/" + oldFileName;
+                final File localFile = new File(localFilePath);
+
+                final StorageReference newFileRef = rootRef.child(folder).child(newFileName);
+                rootRef.child(folder).child(oldFileName).getFile(localFile).addOnSuccessListener(taskSnapshot -> {
+                    UploadTask uploadTask = newFileRef.putFile(Uri.fromFile(localFile));
+                    uploadProgress(uploadTask, newFileRef, newMessageId, messageType);
+                });
+            }
+        }
     }
 
     private void loadMessage() {
@@ -313,9 +340,21 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             } else if (requestCode == REQUEST_CODE_PICK_VIDEO) {
                 Uri uri = data.getData();
                 uploadFile(uri, Constants.getInstance().MESSAGE_TYPE_VIDEO);
+            } else if(requestCode == REQUEST_CODE_FORWARD_MESSAGE){
+
+                Intent intent = new Intent( this, ChatActivity.class);
+                intent.putExtra(Extras.getInstance().USER_KEY, data.getStringExtra(Extras.getInstance().USER_KEY));
+                intent.putExtra(Extras.getInstance().USER_NAME, data.getStringExtra(Extras.getInstance().USER_NAME));
+                intent.putExtra(Extras.getInstance().PHOTO_NAME, data.getStringExtra(Extras.getInstance().PHOTO_NAME));
+
+                intent.putExtra(Extras.getInstance().MESSAGE, data.getStringExtra(Extras.getInstance().MESSAGE));
+                intent.putExtra(Extras.getInstance().MESSAGE_ID, data.getStringExtra(Extras.getInstance().MESSAGE_ID));
+                intent.putExtra(Extras.getInstance().MESSAGE_TYPE, data.getStringExtra(Extras.getInstance().MESSAGE_TYPE));
+
+                startActivity(intent);
+                finish();
             }
         }
-
     }
 
     @Override
