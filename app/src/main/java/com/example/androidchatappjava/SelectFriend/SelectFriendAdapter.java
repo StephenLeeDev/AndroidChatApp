@@ -57,6 +57,16 @@ public class SelectFriendAdapter extends RecyclerView.Adapter<SelectFriendAdapte
                         .into(holder.imageViewProfile);
             }
         });
+
+        holder.linearLayoutSelectFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(context instanceof  SelectFriendActivity) {
+                    ((SelectFriendActivity)context).returnSelectedFriend( friendModel.getUserId(), friendModel.getUserName(),
+                            friendModel.getUserId() + ".jpg"  );
+                }
+            }
+        });
     }
 
     @Override

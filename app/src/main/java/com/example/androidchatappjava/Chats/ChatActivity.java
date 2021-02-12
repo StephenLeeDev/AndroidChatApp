@@ -35,6 +35,7 @@ import com.example.androidchatappjava.Common.Extras;
 import com.example.androidchatappjava.Common.NodeNames;
 import com.example.androidchatappjava.Common.Util;
 import com.example.androidchatappjava.R;
+import com.example.androidchatappjava.SelectFriend.SelectFriendActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
@@ -465,6 +466,14 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void forwardMessage(String selectedMessageId, String selectedMessage, String selectedMessageType) {
+        Intent intent = new Intent(this, SelectFriendActivity.class);
+        intent.putExtra(Extras.MESSAGE, selectedMessage);
+        intent.putExtra(Extras.MESSAGE_ID, selectedMessageId);
+        intent.putExtra(Extras.MESSAGE_TYPE, selectedMessageType);
+        startActivityForResult(intent , REQUEST_CODE_FORWARD_MESSAGE);
     }
 
     public void downloadFile(String messageId, final String messageType, final boolean isShare){

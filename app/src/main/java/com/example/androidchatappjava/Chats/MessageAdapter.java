@@ -216,7 +216,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                     mode.finish();
                     break;
                 case  R.id.menuForward:
-                    Toast.makeText(context, "menuForward", Toast.LENGTH_SHORT).show();
+                    if(context instanceof  ChatActivity) {
+                        ((ChatActivity) context).forwardMessage(selectedMessageId, selectedMessage, selectedMessageType);
+                    }
+
                     mode.finish();
                     break;
 
