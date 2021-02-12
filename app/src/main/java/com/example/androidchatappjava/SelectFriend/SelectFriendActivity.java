@@ -1,8 +1,10 @@
-package com.example.androidchatappjava;
+package com.example.androidchatappjava.SelectFriend;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.androidchatappjava.R;
 
 public class SelectFriendActivity extends AppCompatActivity {
 
